@@ -42,7 +42,7 @@ const Meeting = () => {
           socket.emit("join-room", meetingId, id, name);
 
           socket.on("user-connected", (userId, name) => {
-            var call = peer.call(userId, selfStream);
+            const call = peer.call(userId, selfStream);
             console.log(`calling peer ${name} `, userId);
             call.on("stream", function (userVideoStream) {
               // `stream` is the MediaStream of the remote peer.
@@ -55,6 +55,10 @@ const Meeting = () => {
             call.on("close", () => {
               call.close();
             });
+          });
+
+          peer.on("error", function (err) {
+            console.log("Peer error:", err);
           });
 
           socket.on("user-disconnected", (userId) => {
