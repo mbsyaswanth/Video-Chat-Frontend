@@ -29,7 +29,7 @@ const Meeting = () => {
         selfRef.current.srcObject = myStream;
 
         const peer = new Peer(undefined, {
-          host: process.env.REACT_APP_API_URL,
+          host: process.env.REACT_APP_PEER_HOST,
           port: "443",
           path: "/peerjs/peer"
         });
