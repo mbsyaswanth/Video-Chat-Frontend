@@ -9,7 +9,7 @@ import Video from "../Video";
 
 const Meeting = () => {
   const { meetingId } = useParams();
-  const socket = io.connect("http://localhost:4000", {});
+  const socket = io.connect(process.env.REACT_APP_SOCKET_URL, {});
 
   const [streams, addStream] = useState(new Map());
   const [selfStream, setSelfStream] = useState(null);
@@ -21,12 +21,12 @@ const Meeting = () => {
   useEffect(() => {
     async function enableStream() {
       try {
-        const selfStream = await navigator.mediaDevices.getUserMedia({
+        const myStream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true
         });
-        setSelfStream(selfStream);
-        selfRef.current.srcObject = selfStream;
+        setSelfStream(myStream);
+        selfRef.current.srcObject = myStream;
 
         const peer = new Peer(undefined, {
           host: "localhost",
@@ -96,9 +96,16 @@ const Meeting = () => {
     assignStreams();
   }, [streams]);
 
+  useEffect(() => {
+    return () => {
+      selfStream && selfStream.getTracks().forEach((track) => track.stop());
+    };
+  }, [selfStream]);
+
   return (
     <div>
       Meeting Page
+      {console.log("self stream value", selfStream)}
       <VideoGrid>
         {[...streams.values()].map(({ userVideoStream, name }, index) => {
           console.log("name inside grid ", name);
