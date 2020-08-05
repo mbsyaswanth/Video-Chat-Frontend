@@ -30,7 +30,7 @@ const Meeting = () => {
 
         const peer = new Peer(undefined, {
           host: process.env.REACT_APP_PEER_HOST,
-          port: "443",
+          port: process.env.REACT_APP_PEER_PORT,
           path: "/peerjs/peer"
         });
 
