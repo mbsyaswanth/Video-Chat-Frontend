@@ -2,10 +2,12 @@ import styled from "styled-components";
 
 export const VideoContainer = styled.div`
   position: relative;
+  display: flex;
 `;
 
 export const VideoStyled = styled.video`
-  /* height: 100%; */
+  flex-grow: 1;
+  object-fit: cover;
 `;
 
 export const VideoControlsOverlay = styled.div`

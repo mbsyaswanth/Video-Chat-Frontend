@@ -146,11 +146,18 @@ const Meeting = () => {
     };
   }, [selfStream]);
 
+  const columnCount = () => {
+    const streamsCount = streams.size + 1;
+    if (streamsCount === 2) {
+      return streamsCount;
+    }
+    return Math.ceil(streamsCount / 2);
+  };
+
   return (
     <div>
-      Meeting Page
       {console.log("self stream value", selfStream)}
-      <VideoGrid>
+      <VideoGrid numVideos={columnCount()}>
         {[...streams.values()].map(({ userVideoStream, name }, index) => {
           console.log("name inside grid ", name);
           return (
@@ -169,7 +176,7 @@ const Meeting = () => {
           <Video muteVideo stream={selfStream} ref={selfRef} autoPlay muted />
         )}
       </VideoGrid>
-      <button
+      {/* <button
         onClick={() => {
           selfStream.getAudioTracks()[0].enabled = !selfStream.getAudioTracks()[0]
             .enabled;
@@ -184,7 +191,7 @@ const Meeting = () => {
         }}
       >
         Mute Video
-      </button>
+      </button> */}
     </div>
   );
 };
