@@ -31,7 +31,47 @@ const Meeting = () => {
         const peer = new Peer(undefined, {
           host: process.env.REACT_APP_PEER_HOST,
           port: process.env.REACT_APP_PEER_PORT,
-          path: "/peerjs/peer"
+          path: "/peerjs/peer",
+          config: {
+            iceServers: [
+              { url: "stun:stun.l.google.com:19302" },
+              {
+                url: "turn:numb.viagenie.ca",
+                credential: "123numb123",
+                username: "theamazinggamefame@gmail.com"
+              },
+              {
+                url: "stun:numb.viagenie.ca",
+                credential: "123numb123",
+                username: "theamazinggamefame@gmail.com"
+              },
+              {
+                url: "turn:numb.viagenie.ca:3478",
+                credential: "muazkh",
+                username: "webrtc@live.com"
+              },
+              {
+                url: "turn:numb.viagenie.ca",
+                credential: "muazkh",
+                username: "webrtc@live.com"
+              },
+              {
+                url: "turn:numb.viagenie.ca:3478",
+                credential: "peerjsdemo",
+                username: "p.srikanta@gmail.com"
+              },
+              {
+                url: "turn:192.158.29.39:3478?transport=udp",
+                credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+                username: "28224511:1379330808"
+              },
+              {
+                url: "turn:192.158.29.39:3478?transport=tcp",
+                credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+                username: "28224511:1379330808"
+              }
+            ]
+          }
         });
 
         peer.on("open", (id) => {
