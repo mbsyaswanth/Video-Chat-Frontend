@@ -42,7 +42,7 @@ const Meeting = () => {
           socket.emit("join-room", meetingId, id, name);
 
           socket.on("user-connected", (userId, name) => {
-            const call = peer.call(userId, selfStream);
+            const call = peer.call(userId, myStream);
             console.log(`calling peer ${name} `, userId);
             call.on("stream", function (userVideoStream) {
               // `stream` is the MediaStream of the remote peer.
@@ -57,10 +57,6 @@ const Meeting = () => {
             });
           });
 
-          peer.on("error", function (err) {
-            console.log("Peer error:", err);
-          });
-
           socket.on("user-disconnected", (userId) => {
             console.log("user disconnected", userId);
             streams.delete(userId);
@@ -68,7 +64,7 @@ const Meeting = () => {
           });
 
           peer.on("call", (call) => {
-            call.answer(selfStream);
+            call.answer(myStream);
             call.on("stream", (userVideoStream) => {
               console.log("received stream", userVideoStream);
               console.log("Received call from ", call.peer);
@@ -79,6 +75,10 @@ const Meeting = () => {
             call.on("close", () => {
               call.close();
             });
+          });
+
+          peer.on("error", function (err) {
+            console.log("Peer error:", err);
           });
         });
       } catch (err) {
@@ -125,7 +125,9 @@ const Meeting = () => {
             />
           );
         })}
-        <Video muteVideo stream={selfStream} ref={selfRef} autoPlay muted />
+        {selfStream && (
+          <Video muteVideo stream={selfStream} ref={selfRef} autoPlay muted />
+        )}
       </VideoGrid>
       <button
         onClick={() => {

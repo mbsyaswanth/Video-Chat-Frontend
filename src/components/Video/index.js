@@ -14,8 +14,8 @@ import {
 const Video = React.forwardRef(
   ({ stream, muteVideo = false, name = "anonymous" }, ref) => {
     const [config, setConfig] = useState({
-      audio: stream?.getAudioTracks()[0].enabled,
-      video: stream?.getVideoTracks()[0].enabled
+      audio: stream.getAudioTracks()[0].enabled,
+      video: stream.getVideoTracks()[0].enabled
     });
 
     const toggleAudio = () => {
@@ -36,10 +36,10 @@ const Video = React.forwardRef(
         <ParticipantName>{muteVideo ? selfName : name}</ParticipantName>
         <VideoStyled muted={muteVideo} ref={ref} autoPlay />
         <VideoControlsOverlay>
-          <AudioToggle muted={config.audio} onClick={toggleAudio}>
+          <AudioToggle muted={!config.audio} onClick={toggleAudio}>
             <AiOutlineAudio />
           </AudioToggle>
-          <VideoToggle muted={config.video} onClick={toggleVideo}>
+          <VideoToggle muted={!config.video} onClick={toggleVideo}>
             <FiVideoOff />
           </VideoToggle>
         </VideoControlsOverlay>
