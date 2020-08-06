@@ -35,7 +35,7 @@ const Video = React.forwardRef(
       <VideoContainer>
         {console.log("muted state", name, muteVideo)}
         <ParticipantName>{muteVideo ? selfName : name}</ParticipantName>
-        <VideoStyled ref={ref} autoPlay controls muted={muteVideo} />
+        <VideoStyled ref={ref} autoPlay muted={muteVideo} />
         <VideoControlsOverlay>
           <AudioToggle muted={!config.audio} onClick={toggleAudio}>
             <AiOutlineAudio />
