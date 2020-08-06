@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { CircularProgress } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import {
   HomeContainer,
@@ -16,11 +16,13 @@ import {
 } from "./styledComponents";
 
 const Home = () => {
+  const { meetingId } = useParams();
+  console.log("meetingId param", meetingId);
   const history = useHistory();
   const [state, setState] = useState({
     loading: false,
     error: false,
-    newRoom: true
+    newRoom: !Boolean(meetingId)
   });
 
   const toggleNewRoom = () => {
@@ -115,6 +117,7 @@ const Home = () => {
         <Heading>Its time to talk with your Friends.</Heading>
         <Form onSubmit={onSubmitMeetingId}>
           <Name
+            defaultValue={window.sessionStorage.getItem("name")}
             type="text"
             required
             name="name"
@@ -123,6 +126,7 @@ const Home = () => {
           {!state.newRoom && (
             <RoomId
               required
+              defaultValue={meetingId}
               type="text"
               name="meetingid"
               placeholder="Enter Room Id"

@@ -3,16 +3,17 @@ import React from "react";
 
 import Home from "./components/Home";
 import Meeting from "./components/Meeting";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const Routes = () => {
   return (
     <Switch>
-      <Route exact path="/">
+      <Route exact path="/:meetingId?">
         <Home />
       </Route>
-      <Route path="/meeting/:meetingId">
+      <ProtectedRoute path="/meeting/:meetingId">
         <Meeting />
-      </Route>
+      </ProtectedRoute>
       <Route path="*">
         <div>No match</div>
       </Route>
