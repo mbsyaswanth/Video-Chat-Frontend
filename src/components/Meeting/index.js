@@ -81,14 +81,14 @@ const Meeting = () => {
 
           socket.emit("join-room", meetingId, id, name);
 
-          socket.on("user-connected", (userId, name) => {
+          socket.on("user-connected", (userId, username) => {
             const call = peer.call(userId, myStream);
-            console.log(`calling peer ${name} `, userId);
+            console.log(`calling peer ${username} `, userId);
             call.on("stream", function (userVideoStream) {
               // `stream` is the MediaStream of the remote peer.
               // Here you'd add it to an HTML video/canvas element.
               console.log("received stream", userVideoStream);
-              streams.set(userId, { userVideoStream, name });
+              streams.set(userId, { userVideoStream, name: username });
               addStream(new Map(streams));
             });
 

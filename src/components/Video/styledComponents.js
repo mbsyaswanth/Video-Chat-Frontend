@@ -2,12 +2,14 @@ import styled from "styled-components";
 
 export const VideoContainer = styled.div`
   position: relative;
-  display: flex;
+  align-self: center;
 `;
 
 export const VideoStyled = styled.video`
-  flex-grow: 1;
+  width: 100%;
   object-fit: cover;
+  transform: scaleX(-1);
+  max-height: 100vh;
 `;
 
 export const VideoControlsOverlay = styled.div`
@@ -22,6 +24,7 @@ export const VideoControlsOverlay = styled.div`
 `;
 
 export const ParticipantName = styled.h4`
+  z-index: 10;
   background: rgba(0, 0, 0, 0.5);
   color: white;
   font-weight: bold;
