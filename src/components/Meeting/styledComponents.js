@@ -4,15 +4,77 @@ export const VideoGrid = styled.div`
   display: grid;
   grid-template-columns: ${(props) =>
     `repeat(${props.numVideos},minmax(0, 1fr));`};
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
+  padding-bottom: 60px;
   @media (max-width: 400px) {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     height: auto;
   }
 `;
 
-export const VideoStyled = styled.video`
-  /* height: 100%; */
+export const SelfVideoActions = styled.div`
+  height: 60px;
+  align-items: center;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  justify-content: center;
+  padding: 5px 10px;
+  display: flex;
+  background: #ffffff;
+  box-shadow: 0px -2px 7px 1px #7c7c7c;
+`;
+
+export const EndCall = styled.button`
+  display: flex;
+  margin: 0 20px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #da2222;
+  transition: all 0.1s linear;
+  width: 50px;
+  height: 44px;
+  font-size: 30px;
+  align-items: center;
+  justify-content: center;
+  :focus {
+    outline: none;
+  }
+  :hover {
+    box-shadow: 1px 1px 5px 1px #be1e1e;
+  }
+`;
+
+export const AudioToggle = styled.button`
+  display: flex;
+  margin: 0 5px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  transition: all 0.25s linear;
+  :focus {
+    outline: none;
+  }
+`;
+
+export const VideoToggle = styled.button`
+  display: flex;
+  margin: 0 5px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  transition: all 0.25s linear;
+  :focus {
+    outline: none;
+  }
 `;

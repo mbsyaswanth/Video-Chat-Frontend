@@ -1,18 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "peerjs";
+import { MdCallEnd } from "react-icons/md";
 
-import { VideoGrid, VideoStyled } from "./styledComponents";
+import {
+  VideoGrid,
+  SelfVideoActions,
+  EndCall,
+  AudioToggle,
+  VideoToggle
+} from "./styledComponents";
 
 import Video from "../Video";
+import { AiOutlineAudio } from "react-icons/ai";
+import { FiVideoOff } from "react-icons/fi";
+import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 
 const Meeting = () => {
   const { meetingId } = useParams();
+  const history = useHistory();
   const socket = io.connect(process.env.REACT_APP_SOCKET_URL, {});
 
   const [streams, addStream] = useState(new Map());
   const [selfStream, setSelfStream] = useState(null);
+
+  const [
+    config,
+    toggleAudio,
+    toggleVideo,
+    setStreamConfig
+  ] = useStreamMuteStatus(selfStream);
 
   const refsArray = useRef([]);
 
@@ -165,6 +183,10 @@ const Meeting = () => {
     return Math.ceil(streamsCount / 2);
   };
 
+  const onEndCall = () => {
+    history.replace('/')
+  }
+
   return (
     <div>
       {console.log("self stream value", selfStream)}
@@ -186,22 +208,19 @@ const Meeting = () => {
           <Video muteVideo stream={selfStream} ref={selfRef} autoPlay />
         )}
       </VideoGrid>
-      {/* <button
-        onClick={() => {
-          selfStream.getAudioTracks()[0].enabled = !selfStream.getAudioTracks()[0]
-            .enabled;
-        }}
-      >
-        Mute Audio
-      </button>
-      <button
-        onClick={() => {
-          selfStream.getVideoTracks()[0].enabled = !selfStream.getVideoTracks()[0]
-            .enabled;
-        }}
-      >
-        Mute Video
-      </button> */}
+      <SelfVideoActions>
+        {console.log("self stream config", config)}
+        <AudioToggle muted={!config.audio} onClick={toggleAudio}>
+          <AiOutlineAudio />
+        </AudioToggle>
+
+        <EndCall onClick={onEndCall}>
+          <MdCallEnd />
+        </EndCall>
+        <VideoToggle muted={!config.video} onClick={toggleVideo}>
+          <FiVideoOff />
+        </VideoToggle>
+      </SelfVideoActions>
     </div>
   );
 };

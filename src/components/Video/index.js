@@ -10,31 +10,16 @@ import {
   AudioToggle,
   VideoToggle
 } from "./styledComponents";
+import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 
 const Video = React.forwardRef(
   ({ stream, muteVideo = false, name = "anonymous" }, ref) => {
-    const [config, setConfig] = useState({
-      audio: stream.getAudioTracks()[0].enabled,
-      video: stream.getVideoTracks()[0].enabled
-    });
-
-    const toggleAudio = () => {
-      stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
-      setConfig({ ...config, audio: !config.audio });
-    };
-
-    const toggleVideo = () => {
-      stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
-      setConfig({ ...config, video: !config.video });
-    };
+    const [config, toggleAudio, toggleVideo] = useStreamMuteStatus(stream);
 
     const selfName = window.sessionStorage.getItem("name");
 
-    return (
-      <VideoContainer>
-        {console.log("muted state", name, muteVideo)}
-        <ParticipantName>{muteVideo ? selfName : name}</ParticipantName>
-        <VideoStyled ref={ref} autoPlay muted={muteVideo} />
+    const VideoControls = () => {
+      return (
         <VideoControlsOverlay>
           <AudioToggle muted={!config.audio} onClick={toggleAudio}>
             <AiOutlineAudio />
@@ -43,6 +28,17 @@ const Video = React.forwardRef(
             <FiVideoOff />
           </VideoToggle>
         </VideoControlsOverlay>
+      );
+    };
+
+    return (
+      <VideoContainer>
+        {console.log("all stream config", config)}
+        <ParticipantName>
+          {muteVideo ? selfName + "(You)" : name}
+        </ParticipantName>
+        <VideoStyled ref={ref} autoPlay muted={muteVideo} />
+        {!muteVideo && VideoControls()}
       </VideoContainer>
     );
   }

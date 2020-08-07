@@ -7,9 +7,10 @@ export const VideoContainer = styled.div`
 
 export const VideoStyled = styled.video`
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transform: scaleX(-1);
-  max-height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  max-height: calc(100vh - 60px);
 `;
 
 export const VideoControlsOverlay = styled.div`
