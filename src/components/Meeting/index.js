@@ -168,12 +168,11 @@ const Meeting = () => {
               ref={(ref) => {
                 refsArray.current[index] = ref;
               }}
-              autoPlay
             />
           );
         })}
         {selfStream && (
-          <Video muteVideo stream={selfStream} ref={selfRef} autoPlay muted />
+          <Video muteVideo stream={selfStream} ref={selfRef} autoPlay />
         )}
       </VideoGrid>
       {/* <button
