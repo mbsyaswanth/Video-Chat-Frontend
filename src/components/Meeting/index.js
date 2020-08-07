@@ -82,13 +82,20 @@ const Meeting = () => {
           socket.emit("join-room", meetingId, id, name);
 
           socket.on("user-connected", (userId, username) => {
-            const call = peer.call(userId, myStream);
-            console.log(`calling peer ${username} `, userId);
+            const call = peer.call(userId, myStream, {
+              metadata: {
+                name
+              }
+            });
+            console.log(`calling peer ${username} name from peer: `, userId);
             call.on("stream", function (userVideoStream) {
               // `stream` is the MediaStream of the remote peer.
               // Here you'd add it to an HTML video/canvas element.
               console.log("received stream", userVideoStream);
-              streams.set(userId, { userVideoStream, name: username });
+              streams.set(userId, {
+                userVideoStream,
+                name: username
+              });
               addStream(new Map(streams));
             });
 
@@ -107,8 +114,11 @@ const Meeting = () => {
             call.answer(myStream);
             call.on("stream", (userVideoStream) => {
               console.log("received stream", userVideoStream);
-              console.log("Received call from ", call.peer);
-              streams.set(call.peer, { userVideoStream, name });
+              console.log("Received call from ", call.peer, call.metadata.name);
+              streams.set(call.peer, {
+                userVideoStream,
+                name: call.metadata.name
+              });
               addStream(new Map(streams));
             });
 
@@ -131,8 +141,9 @@ const Meeting = () => {
   }, [meetingId]);
 
   useEffect(() => {
+    console.log("streams map", streams);
     const assignStreams = () => {
-      [...streams.values()].forEach(({ userVideoStream, name }, index) => {
+      [...streams.values()].forEach(({ userVideoStream }, index) => {
         console.log(userVideoStream);
         refsArray.current[index].srcObject = userVideoStream;
       });
