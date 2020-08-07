@@ -29,7 +29,6 @@ const Video = React.forwardRef(
     };
 
     const selfName = window.sessionStorage.getItem("name");
-    console.log("name is ", selfName);
 
     return (
       <VideoContainer>
