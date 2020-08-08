@@ -13,8 +13,8 @@ import {
 } from "./styledComponents";
 
 import Video from "../Video";
-import { AiOutlineAudio } from "react-icons/ai";
-import { FiVideoOff } from "react-icons/fi";
+import { AiOutlineAudio, AiOutlineAudioMuted } from "react-icons/ai";
+import { FiVideoOff, FiVideo } from "react-icons/fi";
 import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 
 const Meeting = () => {
@@ -153,7 +153,7 @@ const Meeting = () => {
 
     enableStream();
     return () => {
-      peer.disconnect();
+      peer.destroy();
       socket.close();
     };
   }, [meetingId]);
@@ -205,14 +205,14 @@ const Meeting = () => {
       <SelfVideoActions>
         {console.log("self stream config", config)}
         <AudioToggle muted={!config.audio} onClick={toggleAudio}>
-          <AiOutlineAudio />
+          {config.audio ? <AiOutlineAudio /> : <AiOutlineAudioMuted />}
         </AudioToggle>
 
         <EndCall onClick={onEndCall}>
           <MdCallEnd />
         </EndCall>
         <VideoToggle muted={!config.video} onClick={toggleVideo}>
-          <FiVideoOff />
+          {config.video ? <FiVideo /> : <FiVideoOff />}
         </VideoToggle>
       </SelfVideoActions>
     </div>

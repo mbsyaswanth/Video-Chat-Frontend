@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { AiOutlineAudio } from "react-icons/ai";
-import { FiVideoOff } from "react-icons/fi";
+import { AiOutlineAudio, AiOutlineAudioMuted } from "react-icons/ai";
+import { FiVideoOff, FiVideo } from "react-icons/fi";
 
 import {
   VideoContainer,
@@ -29,10 +29,10 @@ const Video = React.forwardRef(
       return (
         <VideoControlsOverlay>
           <AudioToggle muted={!config.audio} onClick={toggleAudio}>
-            <AiOutlineAudio />
+            {config.audio ? <AiOutlineAudio /> : <AiOutlineAudioMuted />}
           </AudioToggle>
           <VideoToggle muted={!config.video} onClick={toggleVideo}>
-            <FiVideoOff />
+            {config.video ? <FiVideo /> : <FiVideoOff />}
           </VideoToggle>
         </VideoControlsOverlay>
       );
