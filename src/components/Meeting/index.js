@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import Peer from "peerjs";
-import { MdCallEnd } from "react-icons/md";
+import { MdCallEnd, MdScreenShare } from "react-icons/md";
 
 import {
   VideoGrid,
   SelfVideoActions,
   EndCall,
   AudioToggle,
-  VideoToggle
+  VideoToggle,
+  ShareScreen
 } from "./styledComponents";
 
 import Video from "../Video";
@@ -24,6 +25,7 @@ const Meeting = () => {
 
   const [streams, addStream] = useState(new Map());
   const [selfStream, setSelfStream] = useState(null);
+  const [sharedScreen, setSharedScreen] = useState(null);
 
   const [config, toggleAudio, toggleVideo] = useStreamMuteStatus(selfStream);
 
@@ -96,7 +98,7 @@ const Meeting = () => {
 
           socket.emit("join-room", meetingId, id, name);
 
-          socket.on("user-connected", (userId, username) => {
+          socket.on("user-connected", (userId, username, screen) => {
             const call = peer.call(userId, myStream, {
               metadata: {
                 name
@@ -109,7 +111,8 @@ const Meeting = () => {
               console.log("received stream", userVideoStream);
               streams.set(userId, {
                 userVideoStream,
-                name: username
+                name: username,
+                screen
               });
               addStream(new Map(streams));
             });
@@ -132,7 +135,8 @@ const Meeting = () => {
               console.log("Received call from ", call.peer, call.metadata.name);
               streams.set(call.peer, {
                 userVideoStream,
-                name: call.metadata.name
+                name: call.metadata.name,
+                screen: false
               });
               addStream(new Map(streams));
             });
@@ -169,6 +173,111 @@ const Meeting = () => {
     assignStreams();
   }, [streams]);
 
+  const startScreenCapture = async (
+    displayMediaOptions = { audio: true, video: true }
+  ) => {
+    let captureStream = null;
+
+    try {
+      captureStream = await navigator.mediaDevices.getDisplayMedia(
+        displayMediaOptions
+      );
+    } catch (err) {
+      console.error("Error: " + err);
+    }
+    return captureStream;
+  };
+
+  const shareScreenWithPeers = async () => {
+    const ScreenCaptureStream = await startScreenCapture();
+    if (ScreenCaptureStream) {
+      setSharedScreen(ScreenCaptureStream);
+
+      const peer = new Peer(undefined, {
+        host: process.env.REACT_APP_PEER_HOST,
+        port: process.env.REACT_APP_PEER_PORT,
+        path: "/peerjs/peer",
+        config: {
+          debug: 3,
+          iceServers: [
+            { url: "stun:stun.l.google.com:19302" },
+            {
+              url: "turn:numb.viagenie.ca",
+              credential: "123numb123",
+              username: "theamazinggamefame@gmail.com"
+            },
+            {
+              url: "stun:numb.viagenie.ca",
+              credential: "123numb123",
+              username: "theamazinggamefame@gmail.com"
+            },
+            {
+              url: "turn:numb.viagenie.ca:3478",
+              credential: "muazkh",
+              username: "webrtc@live.com"
+            },
+            {
+              url: "turn:numb.viagenie.ca",
+              credential: "muazkh",
+              username: "webrtc@live.com"
+            },
+            {
+              url: "turn:numb.viagenie.ca:3478",
+              credential: "peerjsdemo",
+              username: "p.srikanta@gmail.com"
+            },
+            {
+              url: "turn:192.158.29.39:3478?transport=udp",
+              credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+              username: "28224511:1379330808"
+            },
+            {
+              url: "turn:192.158.29.39:3478?transport=tcp",
+              credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+              username: "28224511:1379330808"
+            }
+          ]
+        }
+      });
+
+      peer.on("open", (id) => {
+        const name = window.sessionStorage.getItem("name") + "'s screen";
+
+        socket.emit("join-room", meetingId, id, name, true);
+
+        peer.on("call", (call) => {
+          call.answer(ScreenCaptureStream);
+          console.log(
+            "Received screen capture request from ",
+            call.peer,
+            call.metadata.name
+          );
+          call.on("close", () => {
+            call.close();
+          });
+        });
+
+        socket.on("user-disconnected", (userId) => {
+          console.log("user disconnected", userId);
+          streams.delete(userId);
+          addStream(new Map(streams));
+        });
+
+        peer.on("error", function (err) {
+          console.log("Peer error:", err);
+        });
+      });
+    }
+  };
+
+  const toggleScreenShare = () => {
+    if (sharedScreen) {
+      sharedScreen.getTracks().forEach((track) => track.stop());
+    } else {
+      shareScreenWithPeers();
+    }
+  };
+
   const columnCount = () => {
     const streamsCount = streams.size + 1;
     if (streamsCount === 2) {
@@ -185,19 +294,22 @@ const Meeting = () => {
     <div>
       {console.log("self stream value", selfStream)}
       <VideoGrid numVideos={columnCount()}>
-        {[...streams.values()].map(({ userVideoStream, name }, index) => {
-          console.log("name inside grid ", name);
-          return (
-            <Video
-              key={index}
-              stream={userVideoStream}
-              name={name}
-              ref={(ref) => {
-                refsArray.current[index] = ref;
-              }}
-            />
-          );
-        })}
+        {[...streams.values()].map(
+          ({ userVideoStream, name, screen }, index) => {
+            console.log("name inside grid ", name);
+            return (
+              <Video
+                screenShare={screen}
+                key={index}
+                stream={userVideoStream}
+                name={name}
+                ref={(ref) => {
+                  refsArray.current[index] = ref;
+                }}
+              />
+            );
+          }
+        )}
         {selfStream && (
           <Video muteVideo stream={selfStream} ref={selfRef} autoPlay />
         )}
@@ -214,6 +326,9 @@ const Meeting = () => {
         <VideoToggle muted={!config.video} onClick={toggleVideo}>
           {config.video ? <FiVideo /> : <FiVideoOff />}
         </VideoToggle>
+        <ShareScreen onClick={toggleScreenShare}>
+          <MdScreenShare />
+        </ShareScreen>
       </SelfVideoActions>
     </div>
   );

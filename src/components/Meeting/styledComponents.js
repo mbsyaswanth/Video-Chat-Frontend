@@ -8,6 +8,7 @@ export const VideoGrid = styled.div`
   padding-bottom: 60px;
   @media (max-width: 400px) {
     /* grid-template-columns: repeat(2,minmax(0,1fr)); */
+    justify-content: center;
     display: flex;
     flex-direction: column;
     height: auto;
@@ -15,6 +16,7 @@ export const VideoGrid = styled.div`
 `;
 
 export const SelfVideoActions = styled.div`
+  z-index: 20;
   height: 60px;
   align-items: center;
   position: fixed;
@@ -25,11 +27,12 @@ export const SelfVideoActions = styled.div`
   display: flex;
   background: #ffffff;
   box-shadow: 0px -2px 7px 1px #7c7c7c;
+  box-sizing: border-box;
 `;
 
 export const EndCall = styled.button`
   display: flex;
-  margin: 0 20px;
+  margin: 0 16px;
   color: white;
   padding: 10px;
   border: none;
@@ -66,6 +69,23 @@ export const AudioToggle = styled.button`
 `;
 
 export const VideoToggle = styled.button`
+  display: flex;
+  margin: 0 5px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  transition: all 0.25s linear;
+  :focus {
+    outline: none;
+  }
+`;
+
+export const ShareScreen = styled.button`
+  position: absolute;
+  right: 20px;
   display: flex;
   margin: 0 5px;
   color: white;

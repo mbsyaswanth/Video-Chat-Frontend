@@ -13,7 +13,10 @@ import {
 import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 
 const Video = React.forwardRef(
-  ({ stream, muteVideo = false, name = "anonymous" }, ref) => {
+  (
+    { stream, muteVideo = false, name = "anonymous", screenShare = false },
+    ref
+  ) => {
     const [config, toggleAudio, toggleVideo] = useStreamMuteStatus(stream);
 
     useEffect(() => {
@@ -44,7 +47,12 @@ const Video = React.forwardRef(
         <ParticipantName>
           {muteVideo ? selfName + "(You)" : name}
         </ParticipantName>
-        <VideoStyled ref={ref} autoPlay muted={muteVideo} />
+        <VideoStyled
+          flipVideo={!screenShare}
+          ref={ref}
+          autoPlay
+          muted={muteVideo}
+        />
         {!muteVideo && VideoControls()}
       </VideoContainer>
     );
