@@ -42,7 +42,6 @@ const Meeting = () => {
           audio: true
         });
         setSelfStream(myStream);
-        selfRef.current.srcObject = myStream;
 
         peer = new Peer(undefined, {
           host: process.env.REACT_APP_PEER_HOST,
@@ -157,21 +156,10 @@ const Meeting = () => {
 
     enableStream();
     return () => {
-      peer.destroy();
+      peer && peer.destroy();
       socket.close();
     };
   }, [meetingId]);
-
-  useEffect(() => {
-    console.log("streams map", streams);
-    const assignStreams = () => {
-      [...streams.values()].forEach(({ userVideoStream }, index) => {
-        console.log(userVideoStream);
-        refsArray.current[index].srcObject = userVideoStream;
-      });
-    };
-    assignStreams();
-  }, [streams]);
 
   const startScreenCapture = async (
     displayMediaOptions = { audio: true, video: true }
@@ -303,9 +291,6 @@ const Meeting = () => {
                 key={index}
                 stream={userVideoStream}
                 name={name}
-                ref={(ref) => {
-                  refsArray.current[index] = ref;
-                }}
               />
             );
           }
