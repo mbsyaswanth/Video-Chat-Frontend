@@ -4,36 +4,40 @@ const useStreamMuteStatus = (stream = null) => {
   const audioTrack = stream?.getAudioTracks()[0];
   const videoTrack = stream?.getVideoTracks()[0];
   const [streamConfig, setStreamConfig] = useState({
-    audio: audioTrack?.enabled,
-    video: videoTrack?.enabled
+    audio: Boolean(audioTrack?.enabled),
+    video: Boolean(videoTrack?.enabled)
   });
 
   const initializeState = () => {
     setStreamConfig({
-      audio: audioTrack?.enabled,
-      video: videoTrack?.enabled
+      audio: Boolean(audioTrack?.enabled),
+      video: Boolean(videoTrack?.enabled)
     });
   };
 
   const listenOnTracks = () => {
     initializeState();
-    audioTrack.onmute = (event) => {
-      console.log("audio unmute event", event);
-      setStreamConfig({ ...streamConfig, audio: false });
-    };
+    if (audioTrack) {
+      audioTrack.onmute = (event) => {
+        console.log("audio unmute event", event);
+        setStreamConfig({ ...streamConfig, audio: false });
+      };
 
-    audioTrack.onunmute = (event) => {
-      console.log("audio mute event", event);
-      setStreamConfig({ ...streamConfig, audio: true });
-    };
+      audioTrack.onunmute = (event) => {
+        console.log("audio mute event", event);
+        setStreamConfig({ ...streamConfig, audio: true });
+      };
+    }
 
-    videoTrack.onmute = (event) => {
-      setStreamConfig({ ...streamConfig, video: false });
-    };
+    if (videoTrack) {
+      videoTrack.onmute = (event) => {
+        setStreamConfig({ ...streamConfig, video: false });
+      };
 
-    videoTrack.onunmute = (event) => {
-      setStreamConfig({ ...streamConfig, video: true });
-    };
+      videoTrack.onunmute = (event) => {
+        setStreamConfig({ ...streamConfig, video: true });
+      };
+    }
   };
 
   useEffect(() => {

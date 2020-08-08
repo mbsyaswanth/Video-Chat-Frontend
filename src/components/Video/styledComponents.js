@@ -8,7 +8,7 @@ export const VideoContainer = styled.div`
 export const VideoStyled = styled.video`
   width: 100%;
   object-fit: contain;
-  transform: scaleX(-1);
+  transform: ${(props) => (props.flipVideo ? "scaleX(-1)" : "")};
   background: rgba(0, 0, 0, 0.5);
   max-height: calc(100vh - 60px);
 `;
@@ -25,6 +25,7 @@ export const VideoControlsOverlay = styled.div`
 `;
 
 export const ParticipantName = styled.h4`
+  font-size: 0.9rem;
   z-index: 10;
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -52,6 +53,25 @@ export const AudioToggle = styled.button`
 `;
 
 export const VideoToggle = styled.button`
+  display: flex;
+  margin: 0 5px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  transition: all 0.25s linear;
+  :focus {
+    outline: none;
+  }
+`;
+
+export const FullScreenToggle = styled.button`
+  z-index: 2147483647;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
   display: flex;
   margin: 0 5px;
   color: white;
