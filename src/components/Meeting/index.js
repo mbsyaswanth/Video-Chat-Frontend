@@ -177,10 +177,8 @@ const Meeting = () => {
   };
 
   const shareScreenWithPeers = async () => {
-    const ScreenCaptureStream = await startScreenCapture();
-    if (ScreenCaptureStream) {
-      setSharedScreen(ScreenCaptureStream);
-
+    const screenCaptureStream = await startScreenCapture();
+    if (screenCaptureStream) {
       const peer = new Peer(undefined, {
         host: process.env.REACT_APP_PEER_HOST,
         port: process.env.REACT_APP_PEER_PORT,
@@ -230,11 +228,11 @@ const Meeting = () => {
 
       peer.on("open", (id) => {
         const name = window.sessionStorage.getItem("name") + "'s screen";
-
+        setSharedScreen([peer, screenCaptureStream]);
         socket.emit("join-room", meetingId, id, name, true);
 
         peer.on("call", (call) => {
-          call.answer(ScreenCaptureStream);
+          call.answer(screenCaptureStream);
           console.log(
             "Received screen capture request from ",
             call.peer,
@@ -260,7 +258,11 @@ const Meeting = () => {
 
   const toggleScreenShare = () => {
     if (sharedScreen) {
-      sharedScreen.getTracks().forEach((track) => track.stop());
+      sharedScreen[1].getTracks().forEach((track) => track.stop());
+      streams.delete(sharedScreen[0].id);
+      addStream(new Map(streams));
+      sharedScreen[0].destroy();
+      setSharedScreen(null);
     } else {
       shareScreenWithPeers();
     }
@@ -295,9 +297,7 @@ const Meeting = () => {
             );
           }
         )}
-        {selfStream && (
-          <Video muteVideo stream={selfStream} ref={selfRef} autoPlay />
-        )}
+        {selfStream && <Video muteVideo stream={selfStream} autoPlay />}
       </VideoGrid>
       <SelfVideoActions>
         {console.log("self stream config", config)}
@@ -311,7 +311,7 @@ const Meeting = () => {
         <VideoToggle muted={!config.video} onClick={toggleVideo}>
           {config.video ? <FiVideo /> : <FiVideoOff />}
         </VideoToggle>
-        <ShareScreen onClick={toggleScreenShare}>
+        <ShareScreen muted={Boolean(sharedScreen)} onClick={toggleScreenShare}>
           <MdScreenShare />
         </ShareScreen>
       </SelfVideoActions>

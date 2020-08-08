@@ -93,7 +93,7 @@ export const ShareScreen = styled.button`
   border: none;
   cursor: pointer;
   border-radius: 50%;
-  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  background: ${(props) => (props.muted ? "#10b95c" : "rgba(0, 0, 0, 0.5)")};
   transition: all 0.25s linear;
   :focus {
     outline: none;
