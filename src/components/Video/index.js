@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { AiOutlineAudio, AiOutlineAudioMuted } from "react-icons/ai";
 import { FiVideoOff, FiVideo } from "react-icons/fi";
+import { RiFullscreenLine } from "react-icons/ri";
+
+import "./styles.css";
 
 import {
   VideoContainer,
@@ -8,7 +11,8 @@ import {
   VideoControlsOverlay,
   ParticipantName,
   AudioToggle,
-  VideoToggle
+  VideoToggle,
+  FullScreenToggle
 } from "./styledComponents";
 import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 
@@ -41,6 +45,14 @@ const Video = React.forwardRef(
       );
     };
 
+    const toggleFullscreen = () => {
+      if (document.fullscreenEnabled) {
+        ref.current.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    };
+
     return (
       <VideoContainer>
         {console.log("all stream config", config)}
@@ -54,6 +66,9 @@ const Video = React.forwardRef(
           muted={muteVideo}
         />
         {!muteVideo && VideoControls()}
+        <FullScreenToggle onClick={toggleFullscreen}>
+          <RiFullscreenLine />
+        </FullScreenToggle>
       </VideoContainer>
     );
   }

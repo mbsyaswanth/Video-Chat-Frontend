@@ -66,3 +66,22 @@ export const VideoToggle = styled.button`
     outline: none;
   }
 `;
+
+export const FullScreenToggle = styled.button`
+  z-index: 2147483647;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  margin: 0 5px;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  background: ${(props) => (props.muted ? "#DA2222" : "rgba(0, 0, 0, 0.5)")};
+  transition: all 0.25s linear;
+  :focus {
+    outline: none;
+  }
+`;
