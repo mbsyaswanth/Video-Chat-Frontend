@@ -25,18 +25,14 @@ const Meeting = () => {
   const [streams, addStream] = useState(new Map());
   const [selfStream, setSelfStream] = useState(null);
 
-  const [
-    config,
-    toggleAudio,
-    toggleVideo,
-    setStreamConfig
-  ] = useStreamMuteStatus(selfStream);
+  const [config, toggleAudio, toggleVideo] = useStreamMuteStatus(selfStream);
 
   const refsArray = useRef([]);
 
   const selfRef = useRef();
 
   useEffect(() => {
+    let peer;
     async function enableStream() {
       try {
         const myStream = await navigator.mediaDevices.getUserMedia({
@@ -46,11 +42,12 @@ const Meeting = () => {
         setSelfStream(myStream);
         selfRef.current.srcObject = myStream;
 
-        const peer = new Peer(undefined, {
+        peer = new Peer(undefined, {
           host: process.env.REACT_APP_PEER_HOST,
           port: process.env.REACT_APP_PEER_PORT,
           path: "/peerjs/peer",
           config: {
+            debug: 3,
             iceServers: [
               { url: "stun:stun.l.google.com:19302" },
               {
@@ -155,7 +152,10 @@ const Meeting = () => {
     }
 
     enableStream();
-    return () => {};
+    return () => {
+      peer.disconnect();
+      socket.close();
+    };
   }, [meetingId]);
 
   useEffect(() => {
@@ -169,12 +169,6 @@ const Meeting = () => {
     assignStreams();
   }, [streams]);
 
-  useEffect(() => {
-    return () => {
-      selfStream && selfStream.getTracks().forEach((track) => track.stop());
-    };
-  }, [selfStream]);
-
   const columnCount = () => {
     const streamsCount = streams.size + 1;
     if (streamsCount === 2) {
@@ -184,8 +178,8 @@ const Meeting = () => {
   };
 
   const onEndCall = () => {
-    history.replace('/')
-  }
+    history.replace("/");
+  };
 
   return (
     <div>

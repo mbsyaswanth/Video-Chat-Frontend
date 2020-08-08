@@ -7,6 +7,7 @@ export const VideoGrid = styled.div`
   min-height: calc(100vh - 60px);
   padding-bottom: 60px;
   @media (max-width: 400px) {
+    /* grid-template-columns: repeat(2,minmax(0,1fr)); */
     display: flex;
     flex-direction: column;
     height: auto;

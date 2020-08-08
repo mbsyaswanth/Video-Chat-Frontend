@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { AiOutlineAudio } from "react-icons/ai";
 import { FiVideoOff } from "react-icons/fi";
 
@@ -15,6 +15,13 @@ import useStreamMuteStatus from "../../CustomHooks/useStreamMuteStatus";
 const Video = React.forwardRef(
   ({ stream, muteVideo = false, name = "anonymous" }, ref) => {
     const [config, toggleAudio, toggleVideo] = useStreamMuteStatus(stream);
+
+    useEffect(() => {
+      return () => {
+        console.log("stopping media stream");
+        stream && stream.getTracks().forEach((track) => track.stop());
+      };
+    }, [stream]);
 
     const selfName = window.sessionStorage.getItem("name");
 
