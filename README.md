@@ -2,6 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Demo
 Demo of this project is [here](https://video-meet.netlify.app/)
+Please give a star if you like it.
 
 ## Available Scripts
 
