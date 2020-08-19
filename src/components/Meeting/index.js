@@ -283,7 +283,7 @@ const Meeting = () => {
   return (
     <div>
       {console.log("self stream value", selfStream)}
-      <VideoGrid numVideos={columnCount()}>
+      <VideoGrid columnCount={columnCount()} numVideos={streams.size + 1}>
         {[...streams.values()].map(
           ({ userVideoStream, name, screen }, index) => {
             console.log("name inside grid ", name);

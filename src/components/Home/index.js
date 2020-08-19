@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import { CircularProgress } from "@material-ui/core";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -17,30 +17,53 @@ import {
 
 const Home = () => {
   const { meetingId } = useParams();
-  console.log("meetingId param", meetingId);
-  const history = useHistory();
-  const [state, setState] = useState({
+
+  const initialState = {
     loading: false,
     error: false,
     newRoom: !Boolean(meetingId)
-  });
+  };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "LOADING":
+        return { ...state, loading: true };
+      case "FETCH_SUCCESS":
+        return { ...state, loading: false };
+      case "FETCH_ERROR":
+        return {
+          ...state,
+          loading: false,
+          error: "something went wrong" + action.error
+        };
+      case "TOGGLE_NEW_ROOM":
+        return { ...state, newRoom: !state.newRoom };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  console.log("meetingId param", meetingId);
+  const history = useHistory();
 
   const toggleNewRoom = () => {
-    setState({ ...state, newRoom: !state.newRoom });
+    dispatch({ type: "TOGGLE_NEW_ROOM" });
   };
 
   const onCreateNewRoom = () => {
-    setState({ ...state, loading: true });
+    dispatch({ type: "LOADING" });
     fetch(`${process.env.REACT_APP_API_URL}/createRoom`)
       .then((res) => res.json())
       .then(
         (result) => {
-          setState({ ...state, loading: false });
+          dispatch({ type: "FETCH_SUCCESS" });
           console.log(result.roomId);
           goToMeetingPage(result.roomId);
         },
         (error) => {
-          setState({ ...state, loading: false, error });
+          dispatch({ type: "FETCH_ERROR", error });
         }
       );
   };
@@ -56,7 +79,11 @@ const Home = () => {
           )}
         </CreatRoom>
         <Or>or</Or>
-        <TransparentButton name="action" onClick={toggleNewRoom}>
+        <TransparentButton
+          disabled={state.loading}
+          name="action"
+          onClick={toggleNewRoom}
+        >
           Enter Room Id
         </TransparentButton>
       </>

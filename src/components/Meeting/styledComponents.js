@@ -3,11 +3,12 @@ import styled from "styled-components";
 export const VideoGrid = styled.div`
   display: grid;
   grid-template-columns: ${(props) =>
-    `repeat(${props.numVideos},minmax(0, 1fr));`};
+    `repeat(${props.columnCount},minmax(0, 1fr));`};
   min-height: calc(100vh - 60px);
   padding-bottom: 60px;
   @media (max-width: 400px) {
-    /* grid-template-columns: repeat(2,minmax(0,1fr)); */
+    grid-template-columns: ${(props) =>
+      props.numVideos > 2 && " repeat(2,minmax(0,1fr))"};
     justify-content: center;
     display: flex;
     flex-direction: column;
